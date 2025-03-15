@@ -58,3 +58,10 @@ class Portfolio(PortfolioBase):
 
     class Config:
         from_attributes = True
+        
+class PortfolioPaginatedResponse(BaseModel):
+    total: int
+    projects: List[PortfolioResponse]
+    
+    class Config:
+        from_attributes = True

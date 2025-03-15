@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 from app.models.portfolio import Portfolio, Category, Tag
-from app.schemas.portfolio import PortfolioCreate, CategoryCreate, TagCreate, PortfolioUpdate
+from app.schemas.portfolio import PortfolioCreate, CategoryCreate, TagCreate, PortfolioUpdate, PortfolioPaginatedResponse, PortfolioResponse
 from fastapi import HTTPException
-from typing import List
+from typing import List, Dict
 
 def create_category(db: Session, category: CategoryCreate):
     """Creates a new category."""
@@ -71,9 +71,14 @@ def update_project(db: Session, project_id: int, project_update: PortfolioUpdate
     db.refresh(db_project)
     return db_project
 
-def get_all_projects(db: Session):
-    """Retrieve all projects."""
-    return db.query(Portfolio).all()
+def get_all_projects(db: Session, limit: int, offset: int) -> PortfolioPaginatedResponse:
+    """Retrieve paginated list of portfolio projects."""
+    total_count = db.query(Portfolio).count()
+    projects = db.query(Portfolio).limit(limit).offset(offset).all()
+    return PortfolioPaginatedResponse(
+        total=total_count, 
+        projects=[PortfolioResponse.model_validate(project) for project in projects]
+        )
 
 def get_project_by_id(db: Session, project_id: int):
     """Retrieve a project by ID."""

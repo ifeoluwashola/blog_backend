@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from app.db.session import get_db
-from app.schemas.portfolio import PortfolioCreate, PortfolioUpdate, PortfolioResponse, Portfolio, CategoryCreate, Category, TagCreate, Tag
+from app.schemas.portfolio import PortfolioCreate, PortfolioUpdate, PortfolioResponse, PortfolioPaginatedResponse, CategoryCreate, Category, TagCreate, Tag
 from app.services import portfolio as services
 from app.services.user import get_current_user
-from typing import List
+from typing import List, Dict
 
 router = APIRouter()
 
@@ -41,12 +41,19 @@ def update_project(
 ):
     return services.update_project(db, project_id, project, current_user)
 
-@router.get("/list_projects/", response_model=List[PortfolioResponse])
-def list_projects(db: Session = Depends(get_db)):
-    return services.get_all_projects(db)
+@router.get("/list_projects/", response_model=PortfolioPaginatedResponse)
+def list_projects(
+    db: Session = Depends(get_db),
+    limit: int = Query(10, description="Number of projects per page"),
+    offsett: int = Query(0, description="Offset for pagination")
+    ):
+    return services.get_all_projects(db, limit, offsett)
 
 @router.get("/get_project/{project_id}", response_model=PortfolioResponse)
-def get_project(project_id: int, db: Session = Depends(get_db)):
+def get_project(
+    project_id: int, 
+    db: Session = Depends(get_db)
+    ):
     return services.get_project_by_id(db, project_id)
 
 @router.delete("/delete/{project_id}")
