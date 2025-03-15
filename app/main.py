@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from app.db.base import Base
 from app.db.session import engine
-from app.api.v1.endpoints import posts, users, portfolio
+from app.api.v1.endpoints import posts, users, portfolio, contact, about
 from app.core.config import settings
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -39,6 +39,8 @@ app.add_middleware(
 app.include_router(posts.router, prefix="/api/v1/posts", tags=["posts"])
 app.include_router(users.router, prefix="/api/v1/users", tags=["users"])
 app.include_router(portfolio.router, prefix="/api/v1/portfolio", tags=["portfolio"])
+app.include_router(contact.router, prefix="/api/v1/contact", tags=["contact"])
+app.include_router(about.router, prefix="/api/v1/about", tags=["about"])
 
 if __name__ == "__main__":
     uvicorn.run("app.main:app", reload=True)
