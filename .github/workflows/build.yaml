@@ -43,6 +43,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        
       - id: deploy
         uses: bitovi/github-actions-deploy-docker-to-ec2@v1.0.1
         with:
