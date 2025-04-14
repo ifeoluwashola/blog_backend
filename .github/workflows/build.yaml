@@ -31,7 +31,7 @@ jobs:
 
       - name: Build docker image
         run: |
-          cd ./../..
+          cd ./..
           ls -la
           docker build -t blog_backend .
 
